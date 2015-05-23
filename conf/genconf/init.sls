@@ -1,0 +1,5 @@
+include:
+  - .genadminkeyring
+  - .genmonkeyring
+  - .genmonmap
+

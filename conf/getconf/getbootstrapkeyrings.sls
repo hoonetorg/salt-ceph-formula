@@ -1,0 +1,5 @@
+include:
+  - .getbootstraposdkeyring
+  - .getbootstrapmdskeyring
+  - .getbootstraprgwkeyring
+
