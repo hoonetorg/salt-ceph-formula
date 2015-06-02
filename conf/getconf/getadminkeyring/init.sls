@@ -28,6 +28,14 @@ ceph_conf_getconf_getadminkeyring__file_{{admin_keyring}}:
     - require:
       - file: ceph_conf_getconf_getadminkeyring__file_/etc/ceph
 
+ceph_conf_getconf_getadminkeyring_available:
+  cmd.run:
+    - name: echo ceph_conf_getconf_getadminkeyring_available
+    - unless: true
+    - require:
+      - file: ceph_conf_getconf_getadminkeyring__file_/etc/ceph
+      - file: ceph_conf_getconf_getadminkeyring__file_{{admin_keyring}}
+
 {% else %}
 ceph_conf_getconf_getadminkeyring__false:
   cmd.run:
