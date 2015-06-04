@@ -1,6 +1,16 @@
 {% set basepathsls = sls.split('.')[0] -%}
 {% set environment = salt['pillar.get']('environment')-%}
 
+ceph_conf_getconf_getadminkeyring__cmd_refresh_pillar:
+  cmd.run:
+    - name: salt-call -l debug saltutil.refresh_pillar
+
+ceph_conf_getconf_getadminkeyring__sync_all:
+  cmd.run:
+    - name: salt-call -l debug saltutil.sync_all
+    - require: 
+      - cmd: ceph_conf_getconf_getadminkeyring__cmd_refresh_pillar
+
 ceph_conf_getconf_getadminkeyring__file_/etc/ceph:
   file.directory:
     - name: /etc/ceph
@@ -8,6 +18,8 @@ ceph_conf_getconf_getadminkeyring__file_/etc/ceph:
     - group: root
     - mode: 755
     - makedirs: True
+    - require: 
+      - cmd: ceph_conf_getconf_getadminkeyring__sync_all
 
 {% set cluster = salt['pillar.get']('cephname') -%}
 {% set cluster_data = salt['pillar.get']('ceph:clusters:' + cluster ,{}) -%}

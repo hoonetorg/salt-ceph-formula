@@ -1,10 +1,15 @@
+{% set cephenvironment = salt['pillar.get']('cephenvironment') -%}
+# cephenvironment: "{{cephenvironment}}"
 {% set cephname = salt['pillar.get']('cephname') -%}
-{% set cachedir = salt['pillar.get']("cachedir" ) -%}
-{% set environment = salt['pillar.get']("environment" ) -%}
-{% set filebasepath = salt['pillar.get']("filebasepath" ) -%}
-{% set cephmon = salt['pillar.get']("ceph:members:" + cephname + ":mons" )[0] -%}
+# cephname: "{{cephname}}"
 
-{% if cephmon is defined and cephmon != '' %}
+{% set cachedir = salt['pillar.get']("cachedir" ) -%}
+{% set cephmanagementserver = salt['pillar.get'](cephenvironment + ":ceph:members:" + cephname + ":managementserver" ) -%}
+# cephmanagementserver: "{{cephmanagementserver}}"
+{% set filebasepath = salt['pillar.get']("filebasepath") + '/' + cephenvironment  -%}
+# filebasepath: "{{filebasepath}}"
+
+{% if cephmanagementserver is defined and cephmanagementserver != '' and filebasepath is defined and filebasepath != '' %}
 
 {% set filepath = filebasepath + "/files/keys/ceph/" + cephname + "/backup" %}
 ceph_conf_copybootstrapkeyrings__file_{{filepath}}:
@@ -17,8 +22,8 @@ ceph_conf_copybootstrapkeyrings__file_{{filepath}}:
 
 ceph_conf_copybootstrapkeyrings__cmd_copy_{{cephname}}.bootstrap-osd.keyring:
   cmd.run:
-    - name: cp {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/bootstrap-osd/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-osd.keyring
-    - unless: diff {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/bootstrap-osd/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-osd.keyring
+    - name: cp {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/bootstrap-osd/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-osd.keyring
+    - unless: diff {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/bootstrap-osd/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-osd.keyring
     - reload_modules: True
     - require:
       - file: ceph_conf_copybootstrapkeyrings__file_{{filepath}}
@@ -37,8 +42,8 @@ ceph_conf_copybootstrapkeyrings__file_{{cephname}}.bootstrap-osd.keyring:
 
 ceph_conf_copybootstrapkeyrings__cmd_copy_{{cephname}}.bootstrap-mds.keyring:
   cmd.run:
-    - name: cp {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/bootstrap-mds/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-mds.keyring
-    - unless: diff {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/bootstrap-mds/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-mds.keyring
+    - name: cp {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/bootstrap-mds/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-mds.keyring
+    - unless: diff {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/bootstrap-mds/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-mds.keyring
     - reload_modules: True
     - require:
       - file: ceph_conf_copybootstrapkeyrings__file_{{filepath}}
@@ -57,8 +62,8 @@ ceph_conf_copybootstrapkeyrings__file_{{cephname}}.bootstrap-mds.keyring:
 
 ceph_conf_copybootstrapkeyrings__cmd_copy_{{cephname}}.bootstrap-rgw.keyring:
   cmd.run:
-    - name: cp {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/bootstrap-rgw/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-rgw.keyring
-    - unless: diff {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/bootstrap-rgw/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-rgw.keyring
+    - name: cp {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/bootstrap-rgw/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-rgw.keyring
+    - unless: diff {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/bootstrap-rgw/{{cephname}}.keyring {{filepath}}/{{cephname}}.bootstrap-rgw.keyring
     - reload_modules: True
     - require:
       - file: ceph_conf_copybootstrapkeyrings__file_{{filepath}}
@@ -81,12 +86,25 @@ ceph_conf_copybootstrapkeyrings__update_fileserver:
     - m_fun: fileserver.update
     - reload_modules: True
     - require_in:
-      - cmd: ceph_conf_copybootstrapkeyrings__available
+      - cmd: ceph_conf_copybootstrapkeyrings__fileserver_update
 
-ceph_conf_copybootstrapkeyrings__available:
+ceph_conf_copybootstrapkeyrings__fileserver_update:
   cmd.run:
     - name: salt-run -l debug fileserver.update 
     - reload_modules: True
+  
+
+ceph_conf_copybootstrapkeyrings__cmd_refresh_pillar:
+  cmd.run:
+    - name: salt-call -l debug saltutil.refresh_pillar
+    - require: 
+      - cmd: ceph_conf_copybootstrapkeyrings__fileserver_update
+
+ceph_conf_copybootstrapkeyrings__available:
+  cmd.run:
+    - name: salt-call -l debug saltutil.sync_all
+    - require: 
+      - cmd: ceph_conf_copybootstrapkeyrings__cmd_refresh_pillar
 
 {% else %}
 

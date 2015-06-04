@@ -1,10 +1,15 @@
+{% set cephenvironment = salt['pillar.get']('cephenvironment') -%}
+# cephenvironment: "{{cephenvironment}}"
 {% set cephname = salt['pillar.get']('cephname') -%}
-{% set cachedir = salt['pillar.get']("cachedir" ) -%}
-{% set environment = salt['pillar.get']("environment" ) -%}
-{% set filebasepath = salt['pillar.get']("filebasepath" ) -%}
-{% set cephmon = salt['pillar.get']("ceph:members:" + cephname + ":mons" )[0] -%}
+# cephname: "{{cephname}}"
 
-{% if cephmon is defined and cephmon != '' %}
+{% set cachedir = salt['pillar.get']("cachedir" ) -%}
+{% set cephmanagementserver = salt['pillar.get'](cephenvironment + ":ceph:members:" + cephname + ":managementserver" ) -%}
+# cephmanagementserver: "{{cephmanagementserver}}"
+{% set filebasepath = salt['pillar.get']("filebasepath") + '/' + cephenvironment  -%}
+# filebasepath: "{{filebasepath}}"
+
+{% if cephmanagementserver is defined and cephmanagementserver != '' and filebasepath is defined and filebasepath != '' %}
 
 {% set filepath = filebasepath + "/files/keys/ceph/" + cephname %}
 ceph_conf_copyconf__file_{{filepath}}:
@@ -17,8 +22,8 @@ ceph_conf_copyconf__file_{{filepath}}:
 
 ceph_conf_copyconf__cmd_copy_{{cephname}}.client.admin.keyring:
   cmd.run:
-    - name: cp {{cachedir}}/minions/{{cephmon}}/files/etc/ceph/{{cephname}}.client.admin.keyring {{filepath}}/{{cephname}}.client.admin.keyring
-    - unless: diff {{cachedir}}/minions/{{cephmon}}/files/etc/ceph/{{cephname}}.client.admin.keyring {{filepath}}/{{cephname}}.client.admin.keyring
+    - name: cp {{cachedir}}/minions/{{cephmanagementserver}}/files/etc/ceph/{{cephname}}.client.admin.keyring {{filepath}}/{{cephname}}.client.admin.keyring
+    - unless: diff {{cachedir}}/minions/{{cephmanagementserver}}/files/etc/ceph/{{cephname}}.client.admin.keyring {{filepath}}/{{cephname}}.client.admin.keyring
     - reload_modules: True
     - require:
       - file: ceph_conf_copyconf__file_{{filepath}}
@@ -37,8 +42,8 @@ ceph_conf_copyconf__file_{{cephname}}.client.admin.keyring:
 
 ceph_conf_copyconf__cmd_copy_{{cephname}}.mon.keyring:
   cmd.run:
-    - name: cp {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/tmp/{{cephname}}.mon.keyring {{filepath}}/{{cephname}}.mon.keyring
-    - unless: diff {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/tmp/{{cephname}}.mon.keyring {{filepath}}/{{cephname}}.mon.keyring
+    - name: cp {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/tmp/{{cephname}}.mon.keyring {{filepath}}/{{cephname}}.mon.keyring
+    - unless: diff {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/tmp/{{cephname}}.mon.keyring {{filepath}}/{{cephname}}.mon.keyring
     - reload_modules: True
     - require:
       - file: ceph_conf_copyconf__file_{{cephname}}.client.admin.keyring
@@ -58,8 +63,8 @@ ceph_conf_copyconf__file_{{cephname}}.mon.keyring:
 
 ceph_conf_copyconf__cmd_copy_{{cephname}}monmap:
   cmd.run:
-    - name: cp {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/tmp/{{cephname}}monmap {{filepath}}/{{cephname}}monmap
-    - unless: diff {{cachedir}}/minions/{{cephmon}}/files/var/lib/ceph/tmp/{{cephname}}monmap {{filepath}}/{{cephname}}monmap
+    - name: cp {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/tmp/{{cephname}}monmap {{filepath}}/{{cephname}}monmap
+    - unless: diff {{cachedir}}/minions/{{cephmanagementserver}}/files/var/lib/ceph/tmp/{{cephname}}monmap {{filepath}}/{{cephname}}monmap
     - reload_modules: True
     - require:
       - file: ceph_conf_copyconf__file_{{cephname}}.mon.keyring
@@ -84,13 +89,26 @@ ceph_conf_copyconf__update_fileserver:
     - m_fun: fileserver.update
     - reload_modules: True
     - require_in:
-      - cmd: ceph_conf_copyconf__available
+      - cmd: ceph_conf_copyconf__fileserver_update
     
 
-ceph_conf_copyconf__available:
+ceph_conf_copyconf__fileserver_update:
   cmd.run:
     - name: salt-run -l debug fileserver.update 
     - reload_modules: True
+  
+
+ceph_conf_copyconf__cmd_refresh_pillar:
+  cmd.run:
+    - name: salt-call -l debug saltutil.refresh_pillar
+    - require: 
+      - cmd: ceph_conf_copyconf__fileserver_update
+
+ceph_conf_copyconf__available:
+  cmd.run:
+    - name: salt-call -l debug saltutil.sync_all
+    - require: 
+      - cmd: ceph_conf_copyconf__cmd_refresh_pillar
 
 {% else %}
 
