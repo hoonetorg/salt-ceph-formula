@@ -1,4 +1,4 @@
-# salt-ceph
+# salt-ceph-formula
 FILE is WIP
 
 docu and examples missing
