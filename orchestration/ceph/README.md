@@ -1,1 +1,0 @@
-# salt-ceph-orchestration
