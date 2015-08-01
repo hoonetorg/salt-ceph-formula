@@ -1,3 +1,0 @@
-salt-run --force-color -l debug -t 1800 state.orchestrate ceph.orchestration.cephserver saltenv='example_org' pillar="{cephname: 'ceph', cephenvironment: 'example_org' }"  2>&1 |tee -a /var/log/ceph.ceph.log
-salt-run --force-color -l debug -t 1800 state.orchestrate ceph.orchestration.cephclient saltenv='example_org' pillar="{cephname: 'ceph', cephenvironment: 'example_org' }"  2>&1 |tee -a /var/log/ceph.ceph.log
-salt-run --force-color -l debug -t 1800 state.orchestrate ceph.orchestration.libvirtceph saltenv='example_org' pillar="{cephname: 'ceph', cephenvironment: 'example_org' }"  2>&1 |tee -a /var/log/ceph.ceph.log
