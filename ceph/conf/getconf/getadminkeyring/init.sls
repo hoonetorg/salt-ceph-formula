@@ -27,13 +27,13 @@ ceph_conf_getconf_getadminkeyring__file_/etc/ceph:
 
   {% set admin_keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/' + cluster + '.client.admin.keyring') != 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.client.admin.keyring') != 0 %}
 
 ceph_conf_getconf_getadminkeyring__file_{{admin_keyring}}:
   file.managed:
     - name: {{admin_keyring}}
     - template: jinja
-    - source: salt://files/keys/{{ basepathsls }}/{{cluster}}/{{cluster}}.client.admin.keyring
+    - source: salt://{{ basepathsls }}/files/keys/{{cluster}}/{{cluster}}.client.admin.keyring
     - user: root
     - group: root
     - mode: '0600'

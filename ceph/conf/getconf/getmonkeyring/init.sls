@@ -29,13 +29,13 @@ ceph_conf_getconf_getmonkeyring__file_/var/lib/ceph/tmp:
 
 {% set mon_keyring = '/var/lib/ceph/tmp/' + cluster + '.mon.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/' + cluster + '.mon.keyring') != 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.mon.keyring') != 0 %}
 
 ceph_conf_getconf_getmonkeyring__file_{{mon_keyring}}:
   file.managed:
     - name: {{mon_keyring}}
     - template: jinja
-    - source: salt://files/keys/{{ basepathsls }}/{{cluster}}/{{cluster}}.mon.keyring
+    - source: salt://{{ basepathsls }}/files/keys/{{cluster}}/{{cluster}}.mon.keyring
     - user: root
     - group: root
     - mode: '0600'

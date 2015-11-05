@@ -27,13 +27,13 @@ ceph_conf_getconf_getbootstraposdkeyring__file_/var/lib/ceph/bootstrap-osd:
 
 {% set bootstrap_osd_keyring = '/var/lib/ceph/bootstrap-osd/' + cluster + '.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/backup/' + cluster + '.bootstrap-osd.keyring') != 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-osd.keyring') != 0 %}
 
 ceph_conf_getconf_getbootstraposdkeyring__file_{{bootstrap_osd_keyring}}:
   file.managed:
     - name: {{bootstrap_osd_keyring}}
     - template: jinja
-    - source: salt://files/keys/{{ basepathsls }}/{{cluster}}/backup/{{cluster}}.bootstrap-osd.keyring
+    - source: salt://{{ basepathsls }}/files/keys/{{cluster}}/backup/{{cluster}}.bootstrap-osd.keyring
     - user: root
     - group: root
     - mode: '0600'

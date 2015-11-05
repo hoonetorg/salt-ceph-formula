@@ -28,13 +28,13 @@ ceph_conf_getconf_getmonmap__file_/var/lib/ceph/tmp:
 {% set host = cluster_data.cephhostname -%}
 {% set monmap = '/var/lib/ceph/tmp/' + cluster + 'monmap' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/' + cluster + 'monmap') != 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + 'monmap') != 0 %}
 
 ceph_conf_getconf_getmonmap__file_{{monmap}}:
   file.managed:
     - name: {{monmap}}
     - template: jinja
-    - source: salt://files/keys/{{ basepathsls }}/{{cluster}}/{{cluster}}monmap
+    - source: salt://{{ basepathsls }}/files/keys/{{cluster}}/{{cluster}}monmap
     - user: root
     - group: root
     - mode: '0644'

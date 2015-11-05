@@ -11,7 +11,7 @@
 
 {% if cephmanagementserver is defined and cephmanagementserver != '' and filebasepath is defined and filebasepath != '' %}
 
-{% set filepath = filebasepath + "/files/keys/ceph/" + cephname %}
+{% set filepath = filebasepath + "/ceph/files/keys/" + cephname %}
 ceph_conf_copyconf__file_{{filepath}}:
   file.directory:
     - name: {{filepath}}

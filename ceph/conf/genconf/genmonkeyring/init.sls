@@ -17,7 +17,7 @@ ceph_conf_genconf_genmonkeyring__file_/var/lib/ceph/tmp:
 {% set host = cluster_data.cephhostname -%}
 {% set mon_keyring = '/var/lib/ceph/tmp/' + cluster + '.mon.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/' + cluster + '.mon.keyring') == 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.mon.keyring') == 0 %}
 
 ceph_conf_genconf_genmonkeyring__gen_mon_keyring_{{cluster}}:
   cmd.run:

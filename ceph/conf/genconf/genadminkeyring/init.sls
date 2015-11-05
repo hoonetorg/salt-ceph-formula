@@ -15,7 +15,7 @@ ceph_conf_genconf_genadminkeyring__file_/etc/ceph:
 
 {% set admin_keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/' + cluster + '.client.admin.keyring') == 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.client.admin.keyring') == 0 %}
 
 ceph_conf_genconf_genadminkeyring__gen_admin_keyring_{{cluster}}:
   cmd.run:

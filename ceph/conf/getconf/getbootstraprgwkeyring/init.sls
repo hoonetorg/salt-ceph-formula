@@ -27,13 +27,13 @@ ceph_conf_getconf_getbootstraprgwkeyring__file_/var/lib/ceph/bootstrap-rgw:
 
 {% set bootstrap_rgw_keyring = '/var/lib/ceph/bootstrap-rgw/' + cluster + '.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/backup/' + cluster + '.bootstrap-rgw.keyring') != 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-rgw.keyring') != 0 %}
 
 ceph_conf_getconf_getbootstraprgwkeyring__file_{{bootstrap_rgw_keyring}}:
   file.managed:
     - name: {{bootstrap_rgw_keyring}}
     - template: jinja
-    - source: salt://files/keys/{{ basepathsls }}/{{cluster}}/backup/{{cluster}}.bootstrap-rgw.keyring
+    - source: salt://{{ basepathsls }}/files/keys/{{cluster}}/backup/{{cluster}}.bootstrap-rgw.keyring
     - user: root
     - group: root
     - mode: '0600'

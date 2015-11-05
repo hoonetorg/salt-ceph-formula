@@ -27,13 +27,13 @@ ceph_conf_getconf_getbootstrapmdskeyring__file_/var/lib/ceph/bootstrap-mds:
 
 {% set bootstrap_mds_keyring = '/var/lib/ceph/bootstrap-mds/' + cluster + '.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count('files/keys/' + basepathsls + '/' + cluster + '/backup/' + cluster + '.bootstrap-mds.keyring') != 0 %}
+{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-mds.keyring') != 0 %}
 
 ceph_conf_getconf_getbootstrapmdskeyring__file_{{bootstrap_mds_keyring}}:
   file.managed:
     - name: {{bootstrap_mds_keyring}}
     - template: jinja
-    - source: salt://files/keys/{{ basepathsls }}/{{cluster}}/backup/{{cluster}}.bootstrap-mds.keyring
+    - source: salt://{{ basepathsls }}/files/keys/{{cluster}}/backup/{{cluster}}.bootstrap-mds.keyring
     - user: root
     - group: root
     - mode: '0600'
