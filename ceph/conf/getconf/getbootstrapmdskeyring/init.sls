@@ -1,5 +1,5 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{% set environment = salt['pillar.get']('environment')-%}
+{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_getconf_getbootstrapmdskeyring__cmd_refresh_pillar:
   cmd.run:
@@ -27,7 +27,7 @@ ceph_conf_getconf_getbootstrapmdskeyring__file_/var/lib/ceph/bootstrap-mds:
 
 {% set bootstrap_mds_keyring = '/var/lib/ceph/bootstrap-mds/' + cluster + '.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-mds.keyring') != 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-mds.keyring') != 0 %}
 
 ceph_conf_getconf_getbootstrapmdskeyring__file_{{bootstrap_mds_keyring}}:
   file.managed:

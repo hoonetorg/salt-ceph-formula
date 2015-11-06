@@ -1,5 +1,5 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{% set environment = salt['pillar.get']('environment')-%}
+{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_getconf_getbootstraprgwkeyring__cmd_refresh_pillar:
   cmd.run:
@@ -27,7 +27,7 @@ ceph_conf_getconf_getbootstraprgwkeyring__file_/var/lib/ceph/bootstrap-rgw:
 
 {% set bootstrap_rgw_keyring = '/var/lib/ceph/bootstrap-rgw/' + cluster + '.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-rgw.keyring') != 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-rgw.keyring') != 0 %}
 
 ceph_conf_getconf_getbootstraprgwkeyring__file_{{bootstrap_rgw_keyring}}:
   file.managed:

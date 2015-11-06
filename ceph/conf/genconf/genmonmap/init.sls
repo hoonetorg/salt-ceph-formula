@@ -1,5 +1,5 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{% set environment = salt['pillar.get']('environment')-%}
+{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_genconf_genmonmap__file_/var/lib/ceph/tmp:
   file.directory:
@@ -17,7 +17,7 @@ ceph_conf_genconf_genmonmap__file_/var/lib/ceph/tmp:
 {% set fsid = cluster_data.global.fsid -%}
 {% set monmap = '/var/lib/ceph/tmp/' + cluster + 'monmap' -%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + 'monmap') == 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + 'monmap') == 0 %}
 
 ceph_conf_genconf_genmonmap__gen_monmap_{{cluster}}:
   cmd.run:

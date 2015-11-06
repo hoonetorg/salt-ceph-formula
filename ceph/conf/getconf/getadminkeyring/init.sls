@@ -1,5 +1,5 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{% set environment = salt['pillar.get']('environment')-%}
+{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_getconf_getadminkeyring__cmd_refresh_pillar:
   cmd.run:
@@ -27,7 +27,7 @@ ceph_conf_getconf_getadminkeyring__file_/etc/ceph:
 
   {% set admin_keyring = '/etc/ceph/' + cluster + '.client.admin.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.client.admin.keyring') != 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.client.admin.keyring') != 0 %}
 
 ceph_conf_getconf_getadminkeyring__file_{{admin_keyring}}:
   file.managed:

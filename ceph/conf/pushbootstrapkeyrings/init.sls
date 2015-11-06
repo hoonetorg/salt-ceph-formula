@@ -1,5 +1,5 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{% set environment = salt['pillar.get']('environment')-%}
+{# set environment = salt['pillar.get']('environment')-#}
 
 {% set cluster = salt['pillar.get']('cephname') -%}
 {% set cluster_data = salt['pillar.get']('ceph:clusters:' + cluster ,{}) -%}
@@ -9,7 +9,7 @@
 {% set bootstrap_mds_keyring = '/var/lib/ceph/bootstrap-mds/' + cluster + '.keyring' -%}
 {% set bootstrap_rgw_keyring = '/var/lib/ceph/bootstrap-rgw/' + cluster + '.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-osd.keyring') == 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-osd.keyring') == 0 %}
 
 ceph_conf_pushbootstrapkeyrings__bootstrap_osd_keyring_available:
   cmd.run:
@@ -28,7 +28,7 @@ ceph_conf_pushbootstrapkeyrings__cp_push_{{bootstrap_osd_keyring}}:
 
 {% endif%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-mds.keyring') == 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-mds.keyring') == 0 %}
 
 ceph_conf_pushbootstrapkeyrings__bootstrap_mds_keyring_available:
   cmd.run:
@@ -47,7 +47,7 @@ ceph_conf_pushbootstrapkeyrings__cp_push_{{bootstrap_mds_keyring}}:
 
 {% endif%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-rgw.keyring') == 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/backup/' + cluster + '.bootstrap-rgw.keyring') == 0 %}
 
 ceph_conf_pushbootstrapkeyrings__bootstrap_rgw_keyring_available:
   cmd.run:

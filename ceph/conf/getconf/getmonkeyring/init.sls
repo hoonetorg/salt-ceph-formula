@@ -1,5 +1,5 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{% set environment = salt['pillar.get']('environment')-%}
+{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_getconf_getmonkeyring__cmd_refresh_pillar:
   cmd.run:
@@ -29,7 +29,7 @@ ceph_conf_getconf_getmonkeyring__file_/var/lib/ceph/tmp:
 
 {% set mon_keyring = '/var/lib/ceph/tmp/' + cluster + '.mon.keyring' -%}
 
-{% if salt['cp.list_master'](environment).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.mon.keyring') != 0 %}
+{% if salt['cp.list_master'](env).count( basepathsls + '/files/keys/' + cluster + '/' + cluster + '.mon.keyring') != 0 %}
 
 ceph_conf_getconf_getmonkeyring__file_{{mon_keyring}}:
   file.managed:
