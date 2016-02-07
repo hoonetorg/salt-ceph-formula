@@ -83,7 +83,7 @@ ceph_conf_copybootstrapkeyrings__file_{{cephname}}.bootstrap-rgw.keyring:
 ceph_conf_copybootstrapkeyrings__update_fileserver:
   module.run:
     - name: saltutil.runner
-    - m_fun: fileserver.update
+    - _fun: fileserver.update
     - reload_modules: True
     - require_in:
       - cmd: ceph_conf_copybootstrapkeyrings__fileserver_update

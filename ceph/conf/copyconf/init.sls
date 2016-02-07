@@ -86,7 +86,7 @@ ceph_conf_copyconf__file_{{cephname}}monmap:
 ceph_conf_copyconf__update_fileserver:
   module.run:
     - name: saltutil.runner
-    - m_fun: fileserver.update
+    - _fun: fileserver.update
     - reload_modules: True
     - require_in:
       - cmd: ceph_conf_copyconf__fileserver_update
