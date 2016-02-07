@@ -1,5 +1,4 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_genconf_genmonkeyring__file_/var/lib/ceph/tmp:
   file.directory:

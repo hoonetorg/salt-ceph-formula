@@ -1,5 +1,4 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{# set environment = salt['pillar.get']('environment')-#}
 
 {% set cluster = salt['pillar.get']('cephname') -%}
 {% set cluster_data = salt['pillar.get']('ceph:clusters:' + cluster ,{}) -%}

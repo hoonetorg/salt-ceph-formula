@@ -1,5 +1,4 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_genconf_genadminkeyring__file_/etc/ceph:
   file.directory:

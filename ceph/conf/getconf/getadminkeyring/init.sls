@@ -1,5 +1,4 @@
 {% set basepathsls = sls.split('.')[0] -%}
-{# set environment = salt['pillar.get']('environment')-#}
 
 ceph_conf_getconf_getadminkeyring__cmd_refresh_pillar:
   cmd.run:
